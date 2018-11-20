@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  fluentd:
+    build: .docker/fluentd
+    volumes:
+      - .docker/fluentd/conf:/fluentd/etc
+    links:
+      - elasticsearch
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    networks:
+      - default
+      - logging
+
+  elasticsearch:
+    image: elasticsearch:6.5.0
+    expose:
+      - 9200
+    ports:
+      - 9200:9200
+
+  kibana:
+    image: kibana:6.5.0
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601
+
+networks:
+  logging:
+    external:
+      name: tpsfdevops_sf_logging
